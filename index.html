@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MPM Results Dashboard</title>
+<title>MPM Results (Google Sheets)</title>
 <link href="https://fonts.googleapis.com/css2?family=Saira:wght@400;700&display=swap" rel="stylesheet">
 <style>
-body{margin:0;background:#0b0b0b;color:#fff;font-family:'Saira',sans-serif}
+body{margin:0;background:#0b0b0b;color:#fff;font-family:'Saira',sans-serif;font-weight:400}
 .container{max-width:1200px;margin:auto;padding:20px}
 h1{font-weight:700;font-size:48px;letter-spacing:3px;margin-bottom:5px;border-bottom:2px solid #ff2a2a;padding-bottom:5px}
 .subhead{color:#aaa;font-size:14px;margin-bottom:15px}
@@ -17,145 +17,192 @@ h1{font-weight:700;font-size:48px;letter-spacing:3px;margin-bottom:5px;border-bo
 .gold{border-color:#e8c327}.silver{border-color:#aaa}.bronze{border-color:#b87333}
 .table{width:100%;border-collapse:collapse;background:#0f0f0f;border-radius:6px;overflow:hidden}
 th,td{padding:12px;border-bottom:1px solid #1f1f1f;text-align:left}
-th{color:#777;font-size:12px;text-transform:uppercase}
+th{color:#777;font-size:12px;text-transform:uppercase;font-weight:700}
 tr:hover{background:#151515}
 .pos{font-weight:700}
 .p1{color:#e8c327}.p2{color:#aaa}.p3{color:#b87333}
-.mpm{color:#ff2a2a;font-weight:700}
 </style>
 </head>
 <body>
 <div class="container">
-<h1 id="title"></h1>
+<h1>MPM RACE RESULTS</h1>
 <div class="subhead" id="subhead"></div>
+
+<select id="raceSelect"></select>
 
 <div class="stats" id="stats"></div>
 <div class="podium" id="podium"></div>
 
-<select id="raceSelect" onchange="loadRace()"></select>
-
-<table class="table" id="resultsTable">
+<table class="table">
 <thead>
-<tr>
-<th>Pos</th><th>Driver</th><th>Car</th><th>Best Lap</th><th>INC</th><th>Pts</th>
-</tr>
+<tr><th>Pos</th><th>Driver</th><th>Car</th><th>Best Lap</th><th>INC</th><th>Pts</th></tr>
 </thead>
-<tbody></tbody>
+<tbody id="tbody"></tbody>
 </table>
 </div>
 
 <script>
-// 🔥 FIXED: SINGLE SOURCE OF TRUTH
-const races = {
-  race1: {file:'results.csv', title:'Regiment Gaming iRacing Series - Race Results', series:'Regiment Gaming iRacing Series', track:'Daytona', date:'January 10, 2026'},
-  race2: {file:'results2.csv', title:'Mid Pack Mafia - Race Results', series:'MPM GT3 Championship', track:'Kyalami', date:'April 10, 2026'}
-};
+// 🔥 REPLACE THIS WITH YOUR GOOGLE SHEET CSV LINK
+const SHEET_URL = 'PASTE_YOUR_GOOGLE_SHEET_CSV_LINK_HERE';
 
-const select = document.getElementById('raceSelect');
-Object.keys(races).forEach(key=>{
-  let opt=document.createElement('option');
-  opt.value=key;
-  opt.textContent=races[key].track;
-  select.appendChild(opt);
+let allData = [];
+
+fetch(SHEET_URL)
+.then(r=>r.text())
+.then(text=>{
+  const lines = text.trim().split('
+');
+
+  // 🔥 robust CSV split (handles quotes)
+  function splitCSV(line){
+    let res=[],cur='',q=false;
+    for(let c of line){
+      if(c==='"') q=!q;
+      else if(c===','&&!q){res.push(cur);cur='';}
+      else cur+=c;
+    }
+    res.push(cur);
+    return res;
+  }
+
+  const headers = splitCSV(lines[0]);
+
+  const getIndex = (name)=>headers.findIndex(h=>h.toLowerCase().includes(name.toLowerCase()));
+
+  const simI = getIndex('Sim');
+  const raceI = getIndex('Race');
+  const posI = getIndex('Fin Pos');
+  const nameI = getIndex('Name');
+  const carI = getIndex('Car');
+  const bestI = getIndex('Fastest Lap Time');
+  const incI = getIndex('Inc');
+  const ptsI = getIndex('Points');
+
+  for(let i=1;i<lines.length;i++){
+    const row = splitCSV(lines[i]);
+
+    if(!row[posI] || isNaN(parseInt(row[posI]))) continue;
+
+    allData.push({
+      sim: row[simI],
+      race: row[raceI],
+      pos: parseInt(row[posI]),
+      driver: row[nameI],
+      car: simplifyCar(row[carI]),
+      best: row[bestI],
+      inc: parseInt(row[incI]),
+      pts: row[ptsI]
+    });
+  }
+
+  initRaces();
+});
 });
 
-function loadRace(){
- const race=races[select.value];
+function initRaces(){
+  const races = [...new Set(allData.map(r=>r.race))];
+  const select = document.getElementById('raceSelect');
 
- // 🔥 FIX: overwrite header every time
- document.getElementById('title').innerText = race.title;
- document.getElementById('subhead').innerText=`${race.series} · ${race.track} · ${race.date}`;
-
- fetch(race.file).then(r=>r.text()).then(parseCSV);
-}
-
-// default load
-select.value='race1';
-loadRace();
-
-function splitCSV(line){
- let res=[],cur='',q=false;
- for(let c of line){
-  if(c==='"') q=!q;
-  else if(c===','&&!q){res.push(cur);cur='';}
-  else cur+=c;
- }
- res.push(cur);
- return res;
-}
-
-function parseCSV(text){
- const lines=text.trim().split('\n');
- let headerIndex=lines.findIndex(l=>l.includes('Fin Pos'));
- if(headerIndex===-1)return;
-
- const headers=splitCSV(lines[headerIndex]);
- const dataLines=lines.slice(headerIndex+1);
-
- const getIndex=n=>headers.findIndex(h=>h.includes(n));
- const posI=getIndex('Fin Pos');
- const nameI=getIndex('Name');
- const carI=getIndex('Car');
- const bestI=getIndex('Fastest Lap Time');
- const incI=getIndex('Inc');
- const ptsI=getIndex('Points');
-
- let results=[];
-
- dataLines.forEach(line=>{
-  let c=splitCSV(line);
-  if(!c[posI]||isNaN(parseInt(c[posI])))return;
-  results.push({
-    pos:+c[posI],
-    driver:c[nameI].replace(/"/g,''),
-    car:mapCarID(c[carI]),
-    best:c[bestI],
-    inc:c[incI],
-    pts:ptsI!==-1?c[ptsI]:''
+  races.forEach(r=>{
+    let opt=document.createElement('option');
+    opt.value=r;
+    opt.textContent=r;
+    select.appendChild(opt);
   });
- });
 
- results.sort((a,b)=>a.pos-b.pos);
-
- // STATS
- let fastest = results.reduce((a,b)=>a.best<b.best?a:b);
- let cleanest = results.reduce((a,b)=>a.inc<b.inc?a:b);
-
- document.getElementById('stats').innerHTML=`
-  <div class="stat">⚡ Fastest Lap<br>${fastest.driver} (${fastest.best})</div>
-  <div class="stat">🧼 Cleanest<br>${cleanest.driver} (${cleanest.inc}x)</div>
- `;
-
- // PODIUM
- let podiumDiv=document.getElementById('podium');
- podiumDiv.innerHTML='';
- ['gold','silver','bronze'].forEach((cls,i)=>{
-  let r=results[i];
-  podiumDiv.innerHTML+=`<div class="card ${cls}">
-   <div>#${r.pos}</div><div>${r.driver}</div><div>${r.car}</div></div>`;
- });
-
- // TABLE
- let tbody=document.querySelector('#resultsTable tbody');
- tbody.innerHTML='';
- results.forEach(r=>{
-  let mpm=['Glenn Jacobs'];
-  tbody.innerHTML+=`<tr>
-   <td class="pos ${r.pos<=3?'p'+r.pos:''}">${r.pos}</td>
-   <td class="${mpm.includes(r.driver)?'mpm':''}">${r.driver}</td>
-   <td>${r.car}</td>
-   <td>${r.best}</td>
-   <td>${r.inc}</td>
-   <td>${r.pts}</td>
-  </tr>`;
- });
+  select.onchange = loadRace;
+  loadRace();
 }
 
-function mapCarID(id){
- const map={
-  '169':'Porsche 992 GT3 R','132':'BMW M4 GT3 EVO','185':'Ford Mustang GT3','128':'Ferrari 296 GT3','144':'Audi R8 LMS GT3 EVO II','145':'Lamborghini Huracan GT3 EVO2','146':'Mercedes AMG GT3','147':'McLaren 720S GT3 EVO','148':'Aston Martin Vantage GT3','149':'Corvette Z06 GT3.R','150':'Lexus RC F GT3'
- };
- return map[id]||id;
+function loadRace(){
+  const race = document.getElementById('raceSelect').value;
+
+  const filtered = allData.filter(r=>r.race===race);
+  filtered.sort((a,b)=>a.pos-b.pos);
+
+  document.getElementById('subhead').innerText = race;
+
+  // stats (handle empty safely)
+  if(filtered.length === 0) return;
+
+  let fastest = filtered.reduce((a,b)=>a.best<b.best?a:b);
+  let cleanest = filtered.reduce((a,b)=>a.inc<b.inc?a:b);
+
+  document.getElementById('stats').innerHTML=`
+    <div class="stat">⚡ Fastest Lap<br>${fastest.driver} (${fastest.best})</div>
+    <div class="stat">🧼 Cleanest<br>${cleanest.driver} (${cleanest.inc}x)</div>
+  `;
+
+  // podium
+  let podium=document.getElementById('podium');
+  podium.innerHTML='';
+  ['gold','silver','bronze'].forEach((c,i)=>{
+    let r=filtered[i];
+    if(!r) return;
+    podium.innerHTML+=`<div class="card ${c}">
+      <div>#${r.pos}</div>
+      <div>${r.driver}</div>
+      <div>${r.car}</div>
+    </div>`;
+  });
+
+  // table
+  let tbody=document.getElementById('tbody');
+  tbody.innerHTML='';
+
+  filtered.forEach(r=>{
+    tbody.innerHTML+=`<tr>
+      <td class="pos ${r.pos<=3?'p'+r.pos:''}">${r.pos}</td>
+      <td>${r.driver}</td>
+      <td>${r.car}</td>
+      <td>${r.best}</td>
+      <td>${r.inc}</td>
+      <td>${r.pts}</td>
+    </tr>`;
+  });
+}
+
+// 🔥 clean car names automatically
+function simplifyCar(car){
+  if(!car) return '';
+  let c = car.toLowerCase();
+  if(c.includes('porsche')) return 'Porsche 992 GT3 R';
+  if(c.includes('ferrari')) return 'Ferrari 296 GT3';
+  if(c.includes('corvette')) return 'Corvette Z06 GT3.R';
+  if(c.includes('ford')) return 'Ford Mustang GT3';
+  if(c.includes('bmw')) return 'BMW M4 GT3 EVO';
+  return car;
+} (${fastest.best})</div>
+    <div class="stat">🧼 Cleanest<br>${cleanest.driver} (${cleanest.inc}x)</div>
+  `;
+
+  // podium
+  let podium=document.getElementById('podium');
+  podium.innerHTML='';
+  ['gold','silver','bronze'].forEach((c,i)=>{
+    let r=filtered[i];
+    if(!r) return;
+    podium.innerHTML+=`<div class="card ${c}">
+      <div>#${r.pos}</div>
+      <div>${r.driver}</div>
+      <div>${r.car}</div>
+    </div>`;
+  });
+
+  // table
+  let tbody=document.getElementById('tbody');
+  tbody.innerHTML='';
+
+  filtered.forEach(r=>{
+    tbody.innerHTML+=`<tr>
+      <td class="pos ${r.pos<=3?'p'+r.pos:''}">${r.pos}</td>
+      <td>${r.driver}</td>
+      <td>${r.car}</td>
+      <td>${r.best}</td>
+      <td>${r.inc}</td>
+      <td>${r.pts}</td>
+    </tr>`;
+  });
 }
 </script>
 </body>
