@@ -26,7 +26,7 @@ tr:hover{background:#151515}
 </head>
 <body>
 <div class="container">
-<h1>REGIMENT GAMING IRACING SERIES - RACE RESULTS</h1>
+<h1 id="title"></h1>
 <div class="subhead" id="subhead"></div>
 
 <div class="stats" id="stats"></div>
@@ -45,16 +45,10 @@ tr:hover{background:#151515}
 </div>
 
 <script>
-// 🔥 MULTI RACE CONFIG
+// 🔥 FIXED: SINGLE SOURCE OF TRUTH
 const races = {
-  race1: {file:'results1.csv', series:'Regiment Gaming iRacing Series', track:'Daytona', date:'January 10, 2026'},
-  race2: {file:'results2.csv', series:'Regiment Gaming iRacing Series', track:'Sebring', date:'January 24, 2026'},
-  race3: {file:'results3.csv', series:'Regiment Gaming iRacing Series', track:'Road America', date:'February 7, 2026'},
-  race4: {file:'results4.csv', series:'Regiment Gaming iRacing Series', track:'Road Atlanta', date:'February 28, 2026'},
-  race5: {file:'results5.csv', series:'Regiment Gaming iRacing Series', track:'Laguna Seca', date:'March 7, 2026'},
-  race6: {file:'results6.csv', series:'Regiment Gaming iRacing Series', track:'Hungaroring', date:'March 21, 2026'},
-  race7: {file:'results7.csv', series:'Regiment Gaming iRacing Series', track:'Watkins Glen', date:'April 4, 2026'},
-  race8: {file:'results8.csv', series:'Regiment Gaming iRacing Series', track:'Spa', date:'April 18, 2026'}
+  race1: {file:'results.csv', title:'Regiment Gaming iRacing Series - Race Results', series:'Regiment Gaming iRacing Series', track:'Daytona', date:'January 10, 2026'},
+  race2: {file:'results2.csv', title:'Mid Pack Mafia - Race Results', series:'MPM GT3 Championship', track:'Kyalami', date:'April 10, 2026'}
 };
 
 const select = document.getElementById('raceSelect');
@@ -67,10 +61,15 @@ Object.keys(races).forEach(key=>{
 
 function loadRace(){
  const race=races[select.value];
+
+ // 🔥 FIX: overwrite header every time
+ document.getElementById('title').innerText = race.title;
  document.getElementById('subhead').innerText=`${race.series} · ${race.track} · ${race.date}`;
+
  fetch(race.file).then(r=>r.text()).then(parseCSV);
 }
 
+// default load
 select.value='race1';
 loadRace();
 
@@ -118,7 +117,7 @@ function parseCSV(text){
 
  results.sort((a,b)=>a.pos-b.pos);
 
- // 🔥 STATS
+ // STATS
  let fastest = results.reduce((a,b)=>a.best<b.best?a:b);
  let cleanest = results.reduce((a,b)=>a.inc<b.inc?a:b);
 
@@ -159,77 +158,5 @@ function mapCarID(id){
  return map[id]||id;
 }
 </script>
-</body>
-</html>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MPM Results Dashboard</title>
-<link href="https://fonts.googleapis.com/css2?family=Saira:wght@400;700&display=swap" rel="stylesheet">
-<style>
-body{margin:0;background:#0b0b0b;color:#fff;font-family:'Saira',sans-serif;font-weight:400}
-.container{max-width:1200px;margin:auto;padding:20px}
-h1{font-weight:700;font-size:48px;letter-spacing:3px;margin-bottom:5px}
-.subhead{color:#aaa;font-size:14px;margin-bottom:20px;font-weight:400}
-.podium{display:grid;grid-template-columns:1fr 1fr 1fr;gap:15px;margin-bottom:25px}
-.card{background:linear-gradient(145deg,#111,#0a0a0a);padding:15px;text-align:center;border-radius:6px;box-shadow:0 0 10px rgba(0,0,0,0.5);border-top:4px solid}
-.gold{border-color:#e8c327}.silver{border-color:#aaa}.bronze{border-color:#b87333}
-.table{width:100%;border-collapse:collapse;background:#0f0f0f;border-radius:6px;overflow:hidden}
-th,td{padding:12px;border-bottom:1px solid #1f1f1f;text-align:left}
-th{color:#777;font-size:12px;text-transform:uppercase;background:#111;font-weight:700}
-td{font-weight:400}
-tr:hover{background:#151515}
-.pos{font-weight:700}
-.p1{color:#e8c327}.p2{color:#aaa}.p3{color:#b87333}
-.mpm{color:#ff2a2a;font-weight:700}
-</style>
-</head>
-<body>
-<div class="container">
-<h1>MID PACK MAFIA - RACE RESULTS</h1>
-<div class="subhead" id="subhead"></div>
-<div class="podium" id="podium"></div>
-<table class="table" id="resultsTable">
-<thead>
-<tr>
-<th>Pos</th><th>Driver</th><th>Car</th><th>Best Lap</th><th>INC</th><th>Pts</th>
-</tr>
-</thead>
-<tbody></tbody>
-</table>
-</div>
-
-<script>
-// 🔥 MANUAL RACE CONFIG (source of truth)
-const raceInfo = {
-  series: 'MPM GT3 Championship',
-  track: 'Kyalami',
-  date: 'April 10, 2026'
-};
-
-// Set header immediately (no CSV guessing)
-document.getElementById('subhead').innerText = `${raceInfo.series} · ${raceInfo.track} · ${raceInfo.date}`;
-
-fetch('results.csv')
-.then(res=>res.text())
-.then(text=>parseCSV(text));
-
-function splitCSV(line) {
-  const result = [];
-  let current = '';
-  let inQuotes = false;
-  for (let i = 0; i < line.length; i++) {
-    const char = line[i];
-    if (char === '"') inQuotes = !inQuotes;
-    else if (char === ',' && !inQuotes) { result.push(current); current = ''; }
-    else current += char;
-  }
-  result.push(current);
-  return result;
-}
-
-function parseCSV(text
 </body>
 </html>
