@@ -4,27 +4,32 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>MPM Results Dashboard</title>
-<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Oswald:wght@400;700&display=swap" rel="stylesheet">
 <style>
-body{margin:0;background:#0d0d0d;color:#fff;font-family:Arial}
+body{margin:0;background:#0b0b0b;color:#fff;font-family:Arial}
 .container{max-width:1200px;margin:auto;padding:20px}
-h1{font-family:'Oswald',sans-serif;letter-spacing:3px;margin-bottom:5px}
-.subhead{color:#888;font-size:13px;margin-bottom:20px}
-.podium{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:20px}
-.card{background:#111;padding:12px;text-align:center;border-top:3px solid;font-family:'Oswald',sans-serif}
+h1{font-family:'Bebas Neue',sans-serif;font-size:48px;letter-spacing:3px;margin-bottom:5px}
+.subhead{color:#aaa;font-size:14px;margin-bottom:20px}
+
+.podium{display:grid;grid-template-columns:1fr 1fr 1fr;gap:15px;margin-bottom:25px}
+.card{background:linear-gradient(145deg,#111,#0a0a0a);padding:15px;text-align:center;border-radius:6px;box-shadow:0 0 10px rgba(0,0,0,0.5);border-top:4px solid}
 .gold{border-color:#e8c327}.silver{border-color:#aaa}.bronze{border-color:#b87333}
-.table{width:100%;border-collapse:collapse}
-th,td{padding:10px;border-bottom:1px solid #222;text-align:left}
-th{color:#666;font-size:12px;text-transform:uppercase}
-tr:hover{background:#111}
+.card div:first-child{font-size:18px;color:#888}
+.card div:nth-child(2){font-family:'Oswald';font-size:20px}
+.card div:last-child{font-size:13px;color:#aaa}
+
+.table{width:100%;border-collapse:collapse;background:#0f0f0f;border-radius:6px;overflow:hidden}
+th,td{padding:12px;border-bottom:1px solid #1f1f1f;text-align:left}
+th{color:#777;font-size:12px;text-transform:uppercase;background:#111}
+tr:hover{background:#151515}
 .pos{font-weight:bold}
 .p1{color:#e8c327}.p2{color:#aaa}.p3{color:#b87333}
-.mpm{color:#e8000d;font-weight:bold}
+.mpm{color:#ff2a2a;font-weight:bold}
 </style>
 </head>
 <body>
 <div class="container">
-<h1 id="title">MID PACK MAFIA - RACE RESULTS</h1>
+<h1>MID PACK MAFIA - RACE RESULTS</h1>
 <div class="subhead" id="subhead"></div>
 
 <div class="podium" id="podium"></div>
@@ -40,6 +45,15 @@ tr:hover{background:#111}
 </div>
 
 <script>
+// 🔥 MANUAL RACE CONFIG (RECOMMENDED)
+const raceInfo = {
+  series: 'MPM GT3 Championship',
+  track: 'Kyalami',
+  date: 'April 10, 2026'
+};
+
+document.getElementById('subhead').innerText = `${raceInfo.series} · ${raceInfo.track} · ${raceInfo.date}`;
+
 fetch('results.csv')
 .then(res=>res.text())
 .then(text=>parseCSV(text));
@@ -65,12 +79,6 @@ function parseCSV(text){
 
  const headers=splitCSV(lines[headerIndex]);
  const dataLines = lines.slice(headerIndex + 1);
-
- // 🔥 Hard fallback header (since iRacing metadata sucks)
- let track = 'Kyalami';
- let date = new Date().toLocaleDateString();
- let series = 'MPM GT3 Series';
- document.getElementById('subhead').innerText = `${series} · ${track} · ${date}`;
 
  const getIndex=name=>headers.findIndex(h=>h.includes(name));
  const posI=getIndex('Fin Pos');
@@ -131,7 +139,6 @@ function parseCSV(text){
  });
 }
 
-// 🔥 FIX: Proper iRacing Car ID mapping
 function mapCarID(id){
  const carMap={
   '169':'Porsche 992 GT3 R',
@@ -146,7 +153,6 @@ function mapCarID(id){
   '149':'Corvette Z06 GT3.R',
   '150':'Lexus RC F GT3'
  };
-
  return carMap[id] || id;
 }
 </script>
