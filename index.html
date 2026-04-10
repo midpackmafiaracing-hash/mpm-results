@@ -46,13 +46,9 @@ tr:hover{background:#151515}
 
 <script>
 // 🔥 MANUAL RACE CONFIG (RECOMMENDED)
-const raceInfo = {
-  series: 'MPM GT3 Championship',
-  track: 'Kyalami',
-  date: 'April 10, 2026'
+document.getElementById('subhead').innerText = `${raceInfo.series} · ${raceInfo.track} · ${raceInfo.date}`;
 };
 
-document.getElementById('subhead').innerText = `${raceInfo.series} · ${raceInfo.track} · ${raceInfo.date}`;
 
 fetch('results.csv')
 .then(res=>res.text())
