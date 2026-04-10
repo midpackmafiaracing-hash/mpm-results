@@ -1,282 +1,72 @@
-
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MPM Results Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Saira:wght@400;700&display=swap" rel="stylesheet">
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Saira:wght@400;700&display=swap');
-*{box-sizing:border-box;margin:0;padding:0;}
-body{background:transparent;}
-.dash{background:#0d0d0d;color:#fff;font-family:'Saira',Arial,sans-serif;font-weight:400;border-radius:8px;overflow:hidden;}
-.hl{font-family:'Saira',Arial,sans-serif;font-weight:700;text-transform:uppercase;}
-.header-bar{background:#111;border-bottom:1px solid #1e1e1e;padding:12px 18px;display:flex;align-items:center;justify-content:space-between;}
-.brand{display:flex;align-items:center;gap:12px;}
-.brand-logo{width:48px;height:48px;flex-shrink:0;}
-.brand-logo img{width:100%;height:100%;object-fit:contain;display:block;}
-.brand-text{font-size:10px;color:#666;letter-spacing:2px;text-transform:uppercase;}
-.brand-name{display:block;font-family:'Saira',sans-serif;font-weight:700;font-size:15px;color:#fff;letter-spacing:3px;text-transform:uppercase;}
-.meta{text-align:right;font-size:10px;color:#666;letter-spacing:1px;line-height:1.7;}
-.meta strong{color:#e8000d;}
-.circuit-hero{padding:16px 18px 10px;border-bottom:1px solid #1e1e1e;}
-.circuit-name{font-family:'Saira',sans-serif;font-weight:700;text-transform:uppercase;font-size:clamp(34px,6vw,64px);color:#fff;line-height:1;letter-spacing:-1px;}
-.circuit-sub{font-size:10px;color:#e8000d;letter-spacing:4px;text-transform:uppercase;margin-top:5px;}
-.podium{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;background:#1a1a1a;border-bottom:1px solid #1a1a1a;}
-.podium-card{background:#111;padding:16px 12px;text-align:center;position:relative;}
-.podium-card.first{background:#171100;}
-.podium-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
-.podium-card.first::before{background:#e8c327;}
-.podium-card.second::before{background:#888;}
-.podium-card.third::before{background:#b87333;}
-.p-label{font-size:9px;color:#555;letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;}
-.p-name{font-family:'Saira',sans-serif;font-weight:700;font-size:13px;color:#fff;text-transform:uppercase;letter-spacing:0.5px;line-height:1.1;}
-.p-car{font-size:9px;color:#555;margin-top:2px;text-transform:uppercase;letter-spacing:1px;}
-.p-pos{font-family:'Saira',sans-serif;font-weight:700;font-size:40px;line-height:1;margin:8px 0 4px;}
-.first .p-pos{color:#e8c327;}.second .p-pos{color:#aaa;}.third .p-pos{color:#b87333;}
-.p-time{font-size:10px;color:#555;font-family:monospace;}
-.stats-row{display:grid;grid-template-columns:repeat(5,1fr);gap:1px;background:#1a1a1a;border-bottom:1px solid #1a1a1a;}
-.stat-card{background:#0d0d0d;padding:10px 10px;}
-.stat-label{font-size:8px;color:#444;letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;}
-.stat-value{font-family:'Saira',sans-serif;font-weight:700;font-size:13px;color:#fff;text-transform:uppercase;}
-.sv-red{color:#e8000d;}.sv-purple{color:#a855f7;}.sv-green{color:#22c55e;}.sv-blue{color:#3b82f6;}
-.stat-sub{font-size:9px;color:#555;margin-top:2px;text-transform:uppercase;}
-.tabs{display:flex;border-bottom:1px solid #1a1a1a;background:#111;}
-.tab{padding:11px 16px;font-family:'Saira',sans-serif;font-weight:700;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#444;cursor:pointer;border-bottom:2px solid transparent;}
-.tab.active{color:#fff;border-bottom-color:#e8000d;}.tab:hover:not(.active){color:#aaa;}
-.results-table{width:100%;border-collapse:collapse;}
-.results-table th{font-size:8px;color:#333;letter-spacing:2px;text-transform:uppercase;padding:9px 10px;text-align:left;border-bottom:1px solid #181818;}
-.results-table td{padding:10px 10px;font-size:12px;border-bottom:1px solid #141414;vertical-align:middle;}
-.results-table tr:hover td{background:#131313;}
-.pos-num{font-family:'Saira',sans-serif;font-weight:700;font-size:16px;width:36px;}
-.c1{color:#e8c327;}.c2{color:#aaa;}.c3{color:#b87333;}.cx{color:#444;}
-.drv-name{font-family:'Saira',sans-serif;font-weight:700;font-size:12px;color:#fff;text-transform:uppercase;}
-.drv-num{font-size:9px;color:#444;margin-top:1px;}
-.car-badge{display:inline-block;background:#181818;border:1px solid #222;border-radius:3px;padding:2px 6px;font-size:9px;color:#777;text-transform:uppercase;letter-spacing:1px;}
-.gap-cell{font-size:11px;color:#777;font-family:monospace;}.gap-lead{color:#e8000d;font-size:9px;letter-spacing:1px;}
-.lap-cell{font-family:monospace;font-size:10px;color:#888;}.lap-fast{color:#a855f7;}
-.inc-val{font-family:'Saira',sans-serif;font-weight:700;font-size:12px;}
-.inc-clean{color:#22c55e;}.inc-mid{color:#f59e0b;}.inc-high{color:#e8000d;}
-.led-val{font-size:11px;color:#888;}.led-most{color:#e8c327;font-weight:700;}
-.table-wrap{overflow-x:auto;}
-.tab-content{display:none;}.tab-content.active{display:block;}
-.grid-wrap table{width:100%;border-collapse:collapse;}
-.grid-wrap th{font-size:8px;color:#333;letter-spacing:2px;text-transform:uppercase;padding:9px 10px;text-align:left;border-bottom:1px solid #181818;}
-.grid-wrap td{padding:10px 10px;font-size:12px;border-bottom:1px solid #141414;color:#bbb;}
-.ds-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:1px;background:#1a1a1a;}
-.ds-card{background:#0d0d0d;padding:16px 14px;}
-.ds-name{font-family:'Saira',sans-serif;font-weight:700;font-size:12px;color:#fff;text-transform:uppercase;margin-bottom:8px;border-bottom:1px solid #181818;padding-bottom:6px;}
-.ds-row{display:flex;justify-content:space-between;margin-bottom:5px;font-size:10px;}
-.ds-key{color:#444;}.ds-val{color:#fff;font-weight:700;}
-.ds-green{color:#22c55e;}.ds-red{color:#e8000d;}.ds-purple{color:#a855f7;}
-/* DATA LOADER */
-.loader-panel{background:#0d0d0d;border-top:1px solid #1a1a1a;padding:16px 18px;}
-.loader-title{font-family:'Saira',sans-serif;font-weight:700;font-size:10px;color:#e8000d;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;}
-.loader-hint{font-size:10px;color:#555;margin-bottom:8px;line-height:1.5;}
-.loader-hint code{color:#888;background:#181818;padding:1px 4px;border-radius:2px;font-family:monospace;font-size:10px;}
-#json-input{width:100%;background:#111;border:1px solid #222;color:#aaa;font-family:monospace;font-size:10px;padding:8px;border-radius:4px;height:90px;resize:vertical;}
-#json-input:focus{outline:none;border-color:#e8000d;}
-.loader-btn{margin-top:8px;background:#e8000d;color:#fff;border:none;padding:7px 16px;font-family:'Saira',sans-serif;font-weight:700;font-size:10px;letter-spacing:2px;text-transform:uppercase;border-radius:3px;cursor:pointer;}
-.loader-btn:hover{background:#c00;}
-#loader-error{font-size:10px;color:#e8000d;margin-top:6px;display:none;}
-#loader-success{font-size:10px;color:#22c55e;margin-top:6px;display:none;}
+body{margin:0;background:#0b0b0b;color:#fff;font-family:'Saira',sans-serif;font-weight:400}
+.container{max-width:1200px;margin:auto;padding:20px}
+h1{font-weight:700;font-size:48px;letter-spacing:3px;margin-bottom:5px}
+.subhead{color:#aaa;font-size:14px;margin-bottom:20px;font-weight:400}
+.podium{display:grid;grid-template-columns:1fr 1fr 1fr;gap:15px;margin-bottom:25px}
+.card{background:linear-gradient(145deg,#111,#0a0a0a);padding:15px;text-align:center;border-radius:6px;box-shadow:0 0 10px rgba(0,0,0,0.5);border-top:4px solid}
+.gold{border-color:#e8c327}.silver{border-color:#aaa}.bronze{border-color:#b87333}
+.table{width:100%;border-collapse:collapse;background:#0f0f0f;border-radius:6px;overflow:hidden}
+th,td{padding:12px;border-bottom:1px solid #1f1f1f;text-align:left}
+th{color:#777;font-size:12px;text-transform:uppercase;background:#111;font-weight:700}
+td{font-weight:400}
+tr:hover{background:#151515}
+.pos{font-weight:700}
+.p1{color:#e8c327}.p2{color:#aaa}.p3{color:#b87333}
+.mpm{color:#ff2a2a;font-weight:700}
 </style>
-
-<div class="dash">
-  <!-- HEADER -->
-  <div class="header-bar">
-    <div class="brand">
-      <div class="brand-logo">
-        <img src="data:image/png;base64,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" alt="MPM" />
-      </div>
-      <div class="brand-text">
-        <span class="brand-name">Mid Pack Mafia</span>
-        Racing Series
-      </div>
-    </div>
-    <div class="meta" id="header-meta">
-      <span>DATE <strong id="h-date">April 5, 2026</strong></span>
-      <span>TIME <strong id="h-time" style="color:#fff">20:00 GMT</strong> &nbsp;·&nbsp; LAPS <strong id="h-laps" style="color:#fff">16</strong> &nbsp;·&nbsp; ENTRIES <strong id="h-entries" style="color:#fff">18</strong></span>
-    </div>
-  </div>
-
-  <!-- CIRCUIT -->
-  <div class="circuit-hero">
-    <div class="circuit-name" id="h-circuit">Kyalami</div>
-    <div class="circuit-sub" id="h-sub">Grand Prix Circuit &nbsp;·&nbsp; MPM GT3 2026 · Round 1</div>
-  </div>
-
-  <!-- PODIUM -->
-  <div class="podium" id="podium-row">
-    <div class="podium-card second"><div class="p-label">2nd Place</div><div class="p-name" id="p2n">Brad Blacklock</div><div class="p-car" id="p2c">Ford · #242</div><div class="p-pos">2ND</div><div class="p-time" id="p2t">+3.205s</div></div>
-    <div class="podium-card first"><div class="p-label" style="color:#e8c327;letter-spacing:2px">Winner</div><div class="p-name" id="p1n">Dylan Magee</div><div class="p-car" id="p1c">Ford · #221</div><div class="p-pos">1ST</div><div class="p-time" id="p1t" style="color:#e8c327">1:37.218</div></div>
-    <div class="podium-card third"><div class="p-label">3rd Place</div><div class="p-name" id="p3n">Ryne Frankenbery</div><div class="p-car" id="p3c">Ford · #420</div><div class="p-pos">3RD</div><div class="p-time" id="p3t">+37.100s</div></div>
-  </div>
-
-  <!-- STATS -->
-  <div class="stats-row">
-    <div class="stat-card"><div class="stat-label">Pole Position</div><div class="stat-value sv-red" id="s-pole">#1</div><div class="stat-sub" id="s-pole-d">Chance Griffith</div></div>
-    <div class="stat-card"><div class="stat-label">Fastest Lap</div><div class="stat-value sv-purple" id="s-fl">1:16.901</div><div class="stat-sub" id="s-fl-d">Chance Griffith</div></div>
-    <div class="stat-card"><div class="stat-label">Most Laps Led</div><div class="stat-value sv-red" id="s-led">8 Laps</div><div class="stat-sub" id="s-led-d">Brad Blacklock</div></div>
-    <div class="stat-card"><div class="stat-label">Cleanest Race</div><div class="stat-value sv-green" id="s-clean">1x INC</div><div class="stat-sub" id="s-clean-d">Ryne Frankenbery</div></div>
-    <div class="stat-card"><div class="stat-label">Biggest Gain</div><div class="stat-value sv-blue" id="s-gain">+5 POS</div><div class="stat-sub" id="s-gain-d">Akeel T-Grant</div></div>
-  </div>
-
-  <!-- TABS -->
-  <div class="tabs">
-    <div class="tab active" onclick="switchTab('results',this)">Race Results</div>
-    <div class="tab" onclick="switchTab('grid',this)">Grid & Qualifying</div>
-    <div class="tab" onclick="switchTab('driverstats',this)">Driver Stats</div>
-    <div class="tab" onclick="switchTab('load',this)">⬆ Load Data</div>
-  </div>
-
-  <div class="table-wrap">
-    <div id="tab-results" class="tab-content active"><table class="results-table"><thead><tr><th>Pos</th><th>Driver</th><th>Car</th><th>Gap</th><th>Led</th><th>Best Lap</th><th>Avg Lap</th><th>Laps</th><th>INC</th></tr></thead><tbody id="r-tbody"></tbody></table></div>
-    <div id="tab-grid" class="tab-content grid-wrap"><table><thead><tr><th>Grid</th><th>Driver</th><th>Car</th><th>Qual Time</th><th>Finish</th><th>Change</th></tr></thead><tbody id="g-tbody"></tbody></table></div>
-    <div id="tab-driverstats" class="tab-content"><div class="ds-grid" id="ds-grid"></div></div>
-    <div id="tab-load" class="tab-content">
-      <div class="loader-panel">
-        <div class="loader-title">Load Race Results</div>
-        <div class="loader-hint">Paste a JSON array of driver objects below, then click Load. Each object needs:<br>
-        <code>pos</code>, <code>driver</code>, <code>num</code>, <code>car</code>, <code>gap</code>, <code>led</code>, <code>best</code>, <code>avg</code>, <code>laps</code>, <code>inc</code>, <code>grid</code><br><br>
-        Optional header fields (add alongside the array as a wrapper object):<br>
-        <code>circuit</code>, <code>sub</code>, <code>date</code>, <code>time</code>, <code>totalLaps</code>, <code>entries</code>, <code>pole</code>, <code>poleDriver</code>, <code>fastLap</code>, <code>fastDriver</code></div>
-        <textarea id="json-input" spellcheck="false" placeholder='{"circuit":"Spa","sub":"Circuit de Spa · Round 2","date":"May 3 2026","results":[{"pos":1,"driver":"Dylan Magee","num":"#221","car":"Ford","gap":"WINNER","led":10,"best":"2:18.441","avg":"2:20.100","laps":20,"inc":2,"grid":2}]}'></textarea>
-        <button class="loader-btn" onclick="loadData()">Load Results</button>
-        <div id="loader-error"></div>
-        <div id="loader-success"></div>
-      </div>
-    </div>
-  </div>
+</head>
+<body>
+<div class="container">
+<h1>MID PACK MAFIA - RACE RESULTS</h1>
+<div class="subhead" id="subhead"></div>
+<div class="podium" id="podium"></div>
+<table class="table" id="resultsTable">
+<thead>
+<tr>
+<th>Pos</th><th>Driver</th><th>Car</th><th>Best Lap</th><th>INC</th><th>Pts</th>
+</tr>
+</thead>
+<tbody></tbody>
+</table>
 </div>
 
 <script>
-let raceData=[
-  {pos:1,driver:'Dylan Magee',num:'#221',car:'Ford',gap:'WINNER',led:3,best:'1:37.218',avg:'1:58.421',laps:16,inc:2,grid:2},
-  {pos:2,driver:'Brad Blacklock',num:'#242',car:'Ford',gap:'+3.205s',led:8,best:'1:36.986',avg:'1:58.241',laps:16,inc:5,grid:1},
-  {pos:3,driver:'Ryne Frankenbery',num:'#420',car:'Ford',gap:'+37.100s',led:0,best:'1:37.100',avg:'1:59.100',laps:16,inc:1,grid:5},
-  {pos:4,driver:'Chance Griffith',num:'#117',car:'Ferrari',gap:'+42.330s',led:5,best:'1:36.901',avg:'1:58.901',laps:16,inc:4,grid:1},
-  {pos:5,driver:'Akeel T-Grant',num:'#88',car:'McLaren',gap:'+55.780s',led:0,best:'1:38.442',avg:'2:00.110',laps:16,inc:3,grid:10},
-  {pos:6,driver:'Marcus Webb',num:'#55',car:'Porsche',gap:'+1:02.441',led:0,best:'1:38.901',avg:'2:00.800',laps:16,inc:6,grid:7},
-  {pos:7,driver:'Jamie Sutton',num:'#33',car:'BMW',gap:'+1:18.220',led:0,best:'1:39.210',avg:'2:01.500',laps:15,inc:2,grid:9},
-  {pos:8,driver:'Chris Nowak',num:'#76',car:'Audi',gap:'+1L',led:0,best:'1:39.780',avg:'2:02.100',laps:15,inc:8,grid:8},
-];
+// 🔥 MANUAL RACE CONFIG (source of truth)
+const raceInfo = {
+  series: 'MPM GT3 Championship',
+  track: 'Kyalami',
+  date: 'April 10, 2026'
+};
 
-const posLabel=p=>p===1?'1ST':p===2?'2ND':p===3?'3RD':p+'TH';
-const posClass=p=>p===1?'c1':p===2?'c2':p===3?'c3':'cx';
-const incClass=i=>i<=1?'inc-clean':i<=4?'inc-mid':'inc-high';
+// Set header immediately (no CSV guessing)
+document.getElementById('subhead').innerText = `${raceInfo.series} · ${raceInfo.track} · ${raceInfo.date}`;
 
-function renderAll(){
-  const d=raceData;
-  const maxLed=Math.max(...d.map(r=>r.led));
-  const flDrv=d.reduce((a,b)=>a.best<b.best?a:b).driver;
+fetch('results.csv')
+.then(res=>res.text())
+.then(text=>parseCSV(text));
 
-  // podium
-  const top=d.slice().sort((a,b)=>a.pos-b.pos);
-  if(top[0]){document.getElementById('p1n').textContent=top[0].driver;document.getElementById('p1c').textContent=top[0].car+' · '+top[0].num;document.getElementById('p1t').textContent=top[0].gap;}
-  if(top[1]){document.getElementById('p2n').textContent=top[1].driver;document.getElementById('p2c').textContent=top[1].car+' · '+top[1].num;document.getElementById('p2t').textContent=top[1].gap;}
-  if(top[2]){document.getElementById('p3n').textContent=top[2].driver;document.getElementById('p3c').textContent=top[2].car+' · '+top[2].num;document.getElementById('p3t').textContent=top[2].gap;}
-
-  // stats
-  const mostLed=d.reduce((a,b)=>b.led>a.led?b:a);
-  const cleanest=d.reduce((a,b)=>b.inc<a.inc?b:a);
-  const bigGain=d.reduce((a,b)=>(b.grid-b.pos)>(a.grid-a.pos)?b:a);
-  document.getElementById('s-fl').textContent=d.find(r=>r.driver===flDrv).best;
-  document.getElementById('s-fl-d').textContent=flDrv;
-  document.getElementById('s-led').textContent=mostLed.led+' Laps';
-  document.getElementById('s-led-d').textContent=mostLed.driver;
-  document.getElementById('s-clean').textContent=cleanest.inc+'x INC';
-  document.getElementById('s-clean-d').textContent=cleanest.driver;
-  const gain=bigGain.grid-bigGain.pos;
-  document.getElementById('s-gain').textContent=(gain>0?'+':'')+gain+' POS';
-  document.getElementById('s-gain-d').textContent=bigGain.driver;
-
-  // results table
-  const rb=document.getElementById('r-tbody');rb.innerHTML='';
-  d.forEach(r=>{
-    const tr=document.createElement('tr');
-    tr.innerHTML=`<td class="pos-num ${posClass(r.pos)}">${posLabel(r.pos)}</td>
-      <td><div class="drv-name">${r.driver}</div><div class="drv-num">${r.num}</div></td>
-      <td><span class="car-badge">${r.car}</span></td>
-      <td class="gap-cell ${r.pos===1?'gap-lead':''}">${r.gap}</td>
-      <td class="led-val ${r.led===maxLed&&r.led>0?'led-most':''}">${r.led}</td>
-      <td class="lap-cell ${r.driver===flDrv?'lap-fast':''}">${r.best}${r.driver===flDrv?' ★':''}</td>
-      <td class="lap-cell">${r.avg}</td>
-      <td style="font-size:10px;color:#444">${r.laps}</td>
-      <td class="inc-val ${incClass(r.inc)}">${r.inc}x</td>`;
-    rb.appendChild(tr);
-  });
-
-  // grid table
-  const gb=document.getElementById('g-tbody');gb.innerHTML='';
-  [...d].sort((a,b)=>a.grid-b.grid).forEach(r=>{
-    const ch=r.grid-r.pos;
-    const chS=ch>0?`<span style="color:#22c55e">▲${ch}</span>`:ch<0?`<span style="color:#e8000d">▼${Math.abs(ch)}</span>`:`<span style="color:#333">—</span>`;
-    const tr=document.createElement('tr');
-    tr.innerHTML=`<td style="font-family:'Saira',sans-serif;font-weight:700;color:#e8000d;font-size:15px">P${r.grid}</td>
-      <td><div class="drv-name">${r.driver}</div><div class="drv-num">${r.num}</div></td>
-      <td><span class="car-badge">${r.car}</span></td>
-      <td style="font-family:monospace;font-size:10px;color:#a855f7">${r.best}</td>
-      <td class="pos-num ${posClass(r.pos)}">${posLabel(r.pos)}</td>
-      <td>${chS}</td>`;
-    gb.appendChild(tr);
-  });
-
-  // driver stats
-  const dsg=document.getElementById('ds-grid');dsg.innerHTML='';
-  d.slice(0,6).forEach(r=>{
-    const ch=r.grid-r.pos;
-    const chS=ch>0?`+${ch}`:ch<0?`${ch}`:'0';
-    const chC=ch>0?'ds-green':ch<0?'ds-red':'';
-    const el=document.createElement('div');el.className='ds-card';
-    el.innerHTML=`<div class="ds-name">${r.driver} <span style="color:#333;font-size:9px">${r.num}</span></div>
-      <div class="ds-row"><span class="ds-key">Finish</span><span class="ds-val ${posClass(r.pos)}">${posLabel(r.pos)}</span></div>
-      <div class="ds-row"><span class="ds-key">Grid</span><span class="ds-val">P${r.grid}</span></div>
-      <div class="ds-row"><span class="ds-key">Positions gained</span><span class="ds-val ${chC}">${chS}</span></div>
-      <div class="ds-row"><span class="ds-key">Best lap</span><span class="ds-val ds-purple">${r.best}</span></div>
-      <div class="ds-row"><span class="ds-key">Laps led</span><span class="ds-val">${r.led}</span></div>
-      <div class="ds-row"><span class="ds-key">Incidents</span><span class="ds-val ${incClass(r.inc)}">${r.inc}x</span></div>
-      <div class="ds-row"><span class="ds-key">Laps</span><span class="ds-val">${r.laps}</span></div>`;
-    dsg.appendChild(el);
-  });
-}
-
-function loadData(){
-  const err=document.getElementById('loader-error');
-  const ok=document.getElementById('loader-success');
-  err.style.display='none';ok.style.display='none';
-  try{
-    const raw=document.getElementById('json-input').value.trim();
-    const parsed=JSON.parse(raw);
-    let results,meta={};
-    if(Array.isArray(parsed)){results=parsed;}
-    else if(parsed.results){results=parsed.results;meta=parsed;}
-    else{throw new Error('Expected an array or object with a "results" key');}
-    if(!results.length)throw new Error('No driver entries found');
-    // validate first entry has required fields
-    const req=['pos','driver','num','car','gap','led','best','avg','laps','inc','grid'];
-    const missing=req.filter(k=>!(k in results[0]));
-    if(missing.length)throw new Error('Missing fields: '+missing.join(', '));
-    raceData=results;
-    // apply header fields
-    if(meta.circuit)document.getElementById('h-circuit').textContent=meta.circuit;
-    if(meta.sub)document.getElementById('h-sub').textContent=meta.sub;
-    if(meta.date)document.getElementById('h-date').textContent=meta.date;
-    if(meta.time)document.getElementById('h-time').textContent=meta.time;
-    if(meta.totalLaps)document.getElementById('h-laps').textContent=meta.totalLaps;
-    if(meta.entries)document.getElementById('h-entries').textContent=meta.entries;
-    if(meta.pole)document.getElementById('s-pole').textContent=meta.pole;
-    if(meta.poleDriver)document.getElementById('s-pole-d').textContent=meta.poleDriver;
-    renderAll();
-    ok.textContent='✓ Loaded '+results.length+' drivers successfully';
-    ok.style.display='block';
-    switchTab('results',document.querySelector('.tab'));
-  }catch(e){
-    err.textContent='⚠ '+e.message;
-    err.style.display='block';
+function splitCSV(line) {
+  const result = [];
+  let current = '';
+  let inQuotes = false;
+  for (let i = 0; i < line.length; i++) {
+    const char = line[i];
+    if (char === '"') inQuotes = !inQuotes;
+    else if (char === ',' && !inQuotes) { result.push(current); current = ''; }
+    else current += char;
   }
+  result.push(current);
+  return result;
 }
 
-function switchTab(name,el){
-  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
-  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-  document.getElementById('tab-'+name).classList.add('active');
-  el.classList.add('active');
-}
-
-renderAll();
-</script>
+function parseCSV(text
+</body>
+</html>
