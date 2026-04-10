@@ -9,7 +9,7 @@
 body{margin:0;background:#0b0b0b;color:#fff;font-family:'Saira',sans-serif;font-weight:400}
 .container{max-width:1200px;margin:auto;padding:20px}
 h1{font-weight:700;font-size:48px;letter-spacing:3px;margin-bottom:5px;border-bottom:2px solid #ff2a2a;padding-bottom:5px}
-.subhead{color:#aaa;font-size:14px;margin-bottom:15px}
+.subhead{display:none}
 .stats{display:flex;gap:15px;margin-bottom:20px}
 .stat{flex:1;background:#111;padding:10px;border-left:3px solid #ff2a2a}
 .podium{display:grid;grid-template-columns:1fr 1fr 1fr;gap:15px;margin-bottom:25px}
@@ -120,7 +120,7 @@ function loadRace(){
   const filtered = allData.filter(r=>r.race===race);
   filtered.sort((a,b)=>a.pos-b.pos);
 
-  document.getElementById('subhead').innerText = race;
+  // subhead removed
 
   // stats (handle empty safely)
   if(filtered.length === 0) return;
@@ -165,13 +165,26 @@ function loadRace(){
 // 🔥 clean car names automatically
 function simplifyCar(car){
   if(!car) return '';
+
+  // if already a name, clean it
   let c = car.toLowerCase();
   if(c.includes('porsche')) return 'Porsche 992 GT3 R';
   if(c.includes('ferrari')) return 'Ferrari 296 GT3';
   if(c.includes('corvette')) return 'Corvette Z06 GT3.R';
   if(c.includes('ford')) return 'Ford Mustang GT3';
   if(c.includes('bmw')) return 'BMW M4 GT3 EVO';
-  return car;
+
+  // 🔥 numeric ID mapping (extend as needed)
+  const idMap = {
+    '184':'Porsche 992 GT3 R',
+    '156':'Ferrari 296 GT3',
+    '206':'Ford Mustang GT3',
+    '173':'Ferrari 296 GT3'
+  };
+
+  if(idMap[car]) return idMap[car];
+
+  return car; // fallback
 } (${fastest.best})</div>
     <div class="stat">🧼 Cleanest<br>${cleanest.driver} (${cleanest.inc}x)</div>
   `;
