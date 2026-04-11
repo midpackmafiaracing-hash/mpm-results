@@ -58,16 +58,17 @@ fetch(SHEET_URL)
     return res;
   }
 
-  const headers = splitCSV(lines[0]);
+  let headers = splitCSV(lines[0]).map(h=>h.trim());
   const getIndex = (name)=>headers.findIndex(h=>h.toLowerCase().includes(name.toLowerCase()));
 
   const raceI = getIndex('Race');
-  const posI = getIndex('Fin Pos');
+  const posI = getIndex('Fin Pos') !== -1 ? getIndex('Fin Pos') : getIndex('Pos');
   const nameI = getIndex('Name');
   const carI = getIndex('Car');
   const bestI = getIndex('Fastest Lap Time');
   const incI = getIndex('Inc');
-  const ptsI = getIndex('Points');
+  const ptsI = getIndex('Points') !== -1 ? getIndex('Points') : getIndex('League Points');
+  
 
   for(let i=1;i<lines.length;i++){
     const row = splitCSV(lines[i]);
