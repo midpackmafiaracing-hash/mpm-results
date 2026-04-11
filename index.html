@@ -6,7 +6,7 @@
 <title>MPM Results (Google Sheets)</title>
 <link href="https://fonts.googleapis.com/css2?family=Saira:wght@400;700&display=swap" rel="stylesheet">
 <style>
-body{margin:0;background:#0b0b0b;color:#fff;font-family:'Saira',sans-serif;font-weight:400}
+body{margin:0;background:#0b0b0b;color:#fff;font-family:'Saira',sans-serif}
 .container{max-width:1200px;margin:auto;padding:20px}
 h1{font-weight:700;font-size:48px;letter-spacing:3px;margin-bottom:5px;border-bottom:2px solid #ff2a2a;padding-bottom:5px}
 .subhead{display:none}
@@ -26,13 +26,9 @@ tr:hover{background:#151515}
 <body>
 <div class="container">
 <h1>MPM RACE RESULTS</h1>
-<div class="subhead" id="subhead"></div>
-
 <select id="raceSelect"></select>
-
 <div class="stats" id="stats"></div>
 <div class="podium" id="podium"></div>
-
 <table class="table">
 <thead>
 <tr><th>Pos</th><th>Driver</th><th>Car</th><th>Best Lap</th><th>INC</th><th>Pts</th></tr>
@@ -42,18 +38,15 @@ tr:hover{background:#151515}
 </div>
 
 <script>
-// 🔥 REPLACE THIS WITH YOUR GOOGLE SHEET CSV LINK
-const SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQRQCL6lcyz4O7a7UJ0CJyDBIu0Czab1KD-koV1gINjGWPgKbIn-yyegmU5N-q9iMtMiPzky3rWM7Fo/pub?output=csv;'
+const SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQRQCL6lcyz4O7a7UJ0CJyDBIu0Czab1KD-koV1gINjGWPgKbIn-yyegmU5N-q9iMtMiPzky3rWM7Fo/pub?output=csv';
 
 let allData = [];
 
 fetch(SHEET_URL)
 .then(r=>r.text())
 .then(text=>{
-  const lines = text.trim().split('
-');
+  const lines = text.trim().split('\n');
 
-  // 🔥 robust CSV split (handles quotes)
   function splitCSV(line){
     let res=[],cur='',q=false;
     for(let c of line){
@@ -66,10 +59,8 @@ fetch(SHEET_URL)
   }
 
   const headers = splitCSV(lines[0]);
-
   const getIndex = (name)=>headers.findIndex(h=>h.toLowerCase().includes(name.toLowerCase()));
 
-  const simI = getIndex('Sim');
   const raceI = getIndex('Race');
   const posI = getIndex('Fin Pos');
   const nameI = getIndex('Name');
@@ -80,11 +71,9 @@ fetch(SHEET_URL)
 
   for(let i=1;i<lines.length;i++){
     const row = splitCSV(lines[i]);
-
     if(!row[posI] || isNaN(parseInt(row[posI]))) continue;
 
     allData.push({
-      sim: row[simI],
       race: row[raceI],
       pos: parseInt(row[posI]),
       driver: row[nameI],
@@ -96,7 +85,6 @@ fetch(SHEET_URL)
   }
 
   initRaces();
-});
 });
 
 function initRaces(){
@@ -116,14 +104,10 @@ function initRaces(){
 
 function loadRace(){
   const race = document.getElementById('raceSelect').value;
-
   const filtered = allData.filter(r=>r.race===race);
   filtered.sort((a,b)=>a.pos-b.pos);
 
-  // subhead removed
-
-  // stats (handle empty safely)
-  if(filtered.length === 0) return;
+  if(filtered.length===0) return;
 
   let fastest = filtered.reduce((a,b)=>a.best<b.best?a:b);
   let cleanest = filtered.reduce((a,b)=>a.inc<b.inc?a:b);
@@ -133,7 +117,6 @@ function loadRace(){
     <div class="stat">🧼 Cleanest<br>${cleanest.driver} (${cleanest.inc}x)</div>
   `;
 
-  // podium
   let podium=document.getElementById('podium');
   podium.innerHTML='';
   ['gold','silver','bronze'].forEach((c,i)=>{
@@ -146,7 +129,6 @@ function loadRace(){
     </div>`;
   });
 
-  // table
   let tbody=document.getElementById('tbody');
   tbody.innerHTML='';
 
@@ -162,60 +144,15 @@ function loadRace(){
   });
 }
 
-// 🔥 clean car names automatically
 function simplifyCar(car){
   if(!car) return '';
-
-  // if already a name, clean it
   let c = car.toLowerCase();
   if(c.includes('porsche')) return 'Porsche 992 GT3 R';
   if(c.includes('ferrari')) return 'Ferrari 296 GT3';
   if(c.includes('corvette')) return 'Corvette Z06 GT3.R';
   if(c.includes('ford')) return 'Ford Mustang GT3';
   if(c.includes('bmw')) return 'BMW M4 GT3 EVO';
-
-  // 🔥 numeric ID mapping (extend as needed)
-  const idMap = {
-    '184':'Porsche 992 GT3 R',
-    '156':'Ferrari 296 GT3',
-    '206':'Ford Mustang GT3',
-    '173':'Ferrari 296 GT3'
-  };
-
-  if(idMap[car]) return idMap[car];
-
-  return car; // fallback
-} (${fastest.best})</div>
-    <div class="stat">🧼 Cleanest<br>${cleanest.driver} (${cleanest.inc}x)</div>
-  `;
-
-  // podium
-  let podium=document.getElementById('podium');
-  podium.innerHTML='';
-  ['gold','silver','bronze'].forEach((c,i)=>{
-    let r=filtered[i];
-    if(!r) return;
-    podium.innerHTML+=`<div class="card ${c}">
-      <div>#${r.pos}</div>
-      <div>${r.driver}</div>
-      <div>${r.car}</div>
-    </div>`;
-  });
-
-  // table
-  let tbody=document.getElementById('tbody');
-  tbody.innerHTML='';
-
-  filtered.forEach(r=>{
-    tbody.innerHTML+=`<tr>
-      <td class="pos ${r.pos<=3?'p'+r.pos:''}">${r.pos}</td>
-      <td>${r.driver}</td>
-      <td>${r.car}</td>
-      <td>${r.best}</td>
-      <td>${r.inc}</td>
-      <td>${r.pts}</td>
-    </tr>`;
-  });
+  return car;
 }
 </script>
 </body>
