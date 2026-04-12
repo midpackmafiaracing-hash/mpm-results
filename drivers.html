@@ -7,6 +7,158 @@
 
   <style>
     body {
+      margin: 0;
+      background: #0d0d0d;
+      font-family: 'Saira', sans-serif;
+    }
+
+    /* 🔥 FIXED WIDTH CONTAINER */
+    .wrapper {
+      width: 1000px;   /* CONTROL THIS */
+      margin: 0 auto;
+      padding: 20px 0;
+    }
+
+    /* GRID */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+    }
+
+    /* CARD */
+    .card {
+      position: relative;
+      width: 100%;
+      height: 180px;
+      overflow: hidden;
+      border-radius: 10px;
+    }
+
+    .bg {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: 1;
+    }
+
+    .card::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 60%;
+      height: 100%;
+      background: linear-gradient(to right, rgba(0,0,0,0.85), transparent);
+      z-index: 2;
+    }
+
+    .flag {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      width: 36px;
+      z-index: 5;
+    }
+
+    .driver-img {
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      height: 95%;
+      max-width: 45%;
+      object-fit: contain;
+      z-index: 3;
+    }
+
+    .info {
+      position: absolute;
+      left: 15px;
+      bottom: 55px;
+      z-index: 6;
+      color: white;
+    }
+
+    .number {
+      color: #ff0000;
+      font-weight: 700;
+    }
+
+    .name {
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .stats {
+      position: absolute;
+      bottom: 12px;
+      left: 15px;
+      font-size: 12px;
+      color: white;
+      z-index: 6;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="wrapper">
+  <div class="grid"></div>
+</div>
+
+<script>
+const sheetURL = "https://opensheet.elk.sh/1EOr53DgnftbMkTDIZQcmga4u5WkbF7k-W-CGB32_cPo/Sheet1";
+
+async function loadDrivers() {
+  const res = await fetch(sheetURL);
+  const drivers = await res.json();
+
+  const grid = document.querySelector(".grid");
+
+  drivers.forEach(driver => {
+
+    const card = document.createElement("div");
+    card.className = "card";
+
+    card.innerHTML = `
+      <img class="bg" src="images/ui/mpm-card.png">
+
+      <img class="flag"
+        src="https://flagcdn.com/w40/${(driver.country || "").toLowerCase()}.png"
+        onerror="this.style.display='none'">
+
+      <img class="driver-img"
+        src="${driver.driver_image}"
+        onerror="this.style.display='none'">
+
+      <div class="info">
+        <div class="number">#${driver.number || ""}</div>
+        <div class="name">${driver.name || ""}</div>
+      </div>
+
+      <div class="stats">
+        ${driver.sims || ""}
+      </div>
+    `;
+
+    grid.appendChild(card);
+  });
+}
+
+loadDrivers();
+</script>
+
+</body>
+</html><!DOCTYPE html>
+<html>
+<head>
+  <title>MPM Drivers</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Saira:wght@400;700&display=swap" rel="stylesheet">
+
+  <style>
+    body {
       background: #0d0d0d;
       font-family: 'Saira', sans-serif;
       margin: 0;
