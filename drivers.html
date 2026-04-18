@@ -1,372 +1,54 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>MPM Drivers</title>
-
-  <link href="https://fonts.googleapis.com/css2?family=Saira:wght@400;700&display=swap" rel="stylesheet">
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mid Pack Mafia - Drivers</title>
+  <link href="https://fonts.googleapis.com/css2?family=Saira:wght@400;700;800&display=swap" rel="stylesheet">
   <style>
-    body {
-      margin: 0;
-      background: #0d0d0d;
-      font-family: 'Saira', sans-serif;
-    }
-
-    /* 🔥 FIXED WIDTH CONTAINER */
-    .wrapper {
-      width: 1000px;   /* CONTROL THIS */
-      margin: 0 auto;
-      padding: 20px 0;
-    }
-
-    /* GRID */
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 20px;
-    }
-
-    /* CARD */
-    .card {
-      position: relative;
-      width: 100%;
-      height: 180px;
-      overflow: hidden;
-      border-radius: 10px;
-    }
-
-    .bg {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      z-index: 1;
-    }
-
-    .card::after {
-      content: "";
-      position: absolute;
-      left: 0;
-      top: 0;
-      width: 60%;
-      height: 100%;
-      background: linear-gradient(to right, rgba(0,0,0,0.85), transparent);
-      z-index: 2;
-    }
-
-    .flag {
-      position: absolute;
-      top: 10px;
-      left: 10px;
-      width: 36px;
-      z-index: 5;
-    }
-
-    .driver-img {
-      position: absolute;
-      right: 0;
-      bottom: 0;
-      height: 95%;
-      max-width: 45%;
-      object-fit: contain;
-      z-index: 3;
-    }
-
-    .info {
-      position: absolute;
-      left: 15px;
-      bottom: 55px;
-      z-index: 6;
-      color: white;
-    }
-
-    .number {
-      color: #ff0000;
-      font-weight: 700;
-    }
-
-    .name {
-      font-size: 18px;
-      font-weight: 700;
-    }
-
-    .stats {
-      position: absolute;
-      bottom: 12px;
-      left: 15px;
-      font-size: 12px;
-      color: white;
-      z-index: 6;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Saira', sans-serif; background: #000; color: #fff; }
+    nav, footer { background: #000; padding: 0 2.5rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; }
+    nav { height: 72px; border-bottom: 3px solid #ff0000; }
+    footer { border-top: 3px solid #ff0000; padding: 2rem 2.5rem; margin-top: 4rem; }
+    .nav-wordmark, .nav-links a { color: #fff; text-decoration: none; text-transform: uppercase; }
+    .nav-wordmark { font-weight: 800; font-size: 26px; letter-spacing: 0.06em; }
+    .nav-wordmark span, .nav-links a:hover, .nav-links a.active, .eyebrow { color: #ff0000; }
+    .nav-links { list-style: none; display: flex; gap: 28px; }
+    .nav-links a { font-weight: 700; font-size: 12px; letter-spacing: 0.12em; }
+    .wrap { max-width: 960px; margin: 0 auto; padding: 4rem 2rem; }
+    .eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 1rem; }
+    h1 { font-size: 48px; font-weight: 800; text-transform: uppercase; line-height: 1; margin-bottom: 1rem; }
+    p { max-width: 55ch; color: #aaa; line-height: 1.7; }
+    .card { margin-top: 2rem; border: 1px solid #1a1a1a; background: #0a0a0a; padding: 1.5rem; }
+    .footer-copy, .footer-tagline { font-size: 12px; letter-spacing: 0.08em; }
+    .footer-copy { color: #444; }
+    .footer-tagline { color: #ff0000; text-transform: uppercase; font-weight: 700; }
   </style>
 </head>
-
 <body>
-
-<div class="wrapper">
-  <div class="grid"></div>
-</div>
-
-<script>
-const sheetURL = "https://opensheet.elk.sh/1EOr53DgnftbMkTDIZQcmga4u5WkbF7k-W-CGB32_cPo/Sheet1";
-
-async function loadDrivers() {
-  const res = await fetch(sheetURL);
-  const drivers = await res.json();
-
-  const grid = document.querySelector(".grid");
-
-  drivers.forEach(driver => {
-
-    const card = document.createElement("div");
-    card.className = "card";
-
-    card.innerHTML = `
-      <img class="bg" src="images/ui/mpm-card.png">
-
-      <img class="flag"
-        src="https://flagcdn.com/w40/${(driver.country || "").toLowerCase()}.png"
-        onerror="this.style.display='none'">
-
-      <img class="driver-img"
-        src="${driver.driver_image}"
-        onerror="this.style.display='none'">
-
-      <div class="info">
-        <div class="number">#${driver.number || ""}</div>
-        <div class="name">${driver.name || ""}</div>
-      </div>
-
-      <div class="stats">
-        ${driver.sims || ""}
-      </div>
-    `;
-
-    grid.appendChild(card);
-  });
-}
-
-loadDrivers();
-</script>
-
-</body>
-</html><!DOCTYPE html>
-<html>
-<head>
-  <title>MPM Drivers</title>
-
-  <link href="https://fonts.googleapis.com/css2?family=Saira:wght@400;700&display=swap" rel="stylesheet">
-
-  <style>
-    body {
-      background: #0d0d0d;
-      font-family: 'Saira', sans-serif;
-      margin: 0;
-      padding: 20px;
-    }
-
-    /* GRID LAYOUT */
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-      gap: 20px;
-    }
-
-    /* CARD */
-    .card {
-      position: relative;
-      height: 180px;
-      overflow: hidden;
-      border-radius: 10px;
-      cursor: pointer;
-      transition: 0.2s;
-    }
-
-    .card:hover {
-      transform: scale(1.02);
-      box-shadow: 0 0 12px rgba(255,0,0,0.4);
-    }
-
-    /* BACKGROUND */
-    .bg {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      z-index: 1;
-    }
-
-    /* LEFT FADE */
-    .card::after {
-      content: "";
-      position: absolute;
-      left: 0;
-      top: 0;
-      width: 65%;
-      height: 100%;
-      background: linear-gradient(to right, rgba(0,0,0,0.85), transparent);
-      z-index: 2;
-    }
-
-    /* FLAG */
-    .flag {
-      position: absolute;
-      top: 10px;
-      left: 10px;
-      width: 36px;
-      z-index: 6;
-    }
-
-    /* DRIVER IMAGE */
-    .driver-img {
-      position: absolute;
-      right: 0;
-      bottom: 0;
-      height: 95%;
-      max-width: 48%;
-      object-fit: contain;
-      z-index: 3;
-      pointer-events: none;
-    }
-
-    /* TEXT */
-    .info {
-      position: absolute;
-      left: 15px;
-      bottom: 55px;
-      z-index: 7;
-    }
-
-    .number {
-      color: #ff0000;
-      font-weight: 700;
-      font-size: 14px;
-    }
-
-    .name {
-      font-size: 18px;
-      font-weight: 700;
-      color: white;
-    }
-
-    /* BOTTOM LINE */
-    .stats {
-      position: absolute;
-      bottom: 12px;
-      left: 15px;
-      font-size: 11px;
-      opacity: 0.85;
-      color: white;
-      z-index: 7;
-    }
-
-    /* MODAL */
-    .modal {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0,0,0,0.9);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 999;
-    }
-
-    .modal-content {
-      background: #111;
-      padding: 20px;
-      width: 90%;
-      max-width: 600px;
-      border-radius: 12px;
-      color: white;
-    }
-
-    .close {
-      float: right;
-      cursor: pointer;
-      font-size: 24px;
-    }
-  </style>
-</head>
-
-<body>
-
-<div class="grid"></div>
-
-<script>
-const sheetURL = "https://opensheet.elk.sh/1EOr53DgnftbMkTDIZQcmga4u5WkbF7k-W-CGB32_cPo/Sheet1";
-
-async function loadDrivers() {
-  const res = await fetch(sheetURL);
-  const drivers = await res.json();
-
-  const grid = document.querySelector(".grid");
-
-  drivers.forEach(driver => {
-
-    const card = document.createElement("div");
-    card.className = "card";
-
-    card.innerHTML = `
-      <img class="bg" src="images/ui/mpm-card.png">
-
-      <img class="flag"
-           src="https://flagcdn.com/w40/${(driver.country || "").toLowerCase()}.png"
-           onerror="this.style.display='none'">
-
-      <img class="driver-img"
-           src="${driver.driver_image}"
-           onerror="this.style.display='none'">
-
-      <div class="info">
-        <div class="number">#${driver.number || ""}</div>
-        <div class="name">${driver.name || ""}</div>
-      </div>
-
-      <div class="stats">
-        ${driver.sims || ""}
-      </div>
-    `;
-
-    card.onclick = () => openModal(driver);
-
-    grid.appendChild(card);
-  });
-}
-
-function openModal(driver) {
-
-  const highlights = (driver.highlights || "").split(";").join("<br>");
-
-  const modal = document.createElement("div");
-  modal.className = "modal";
-
-  modal.innerHTML = `
-    <div class="modal-content">
-      <span class="close" onclick="this.parentElement.parentElement.remove()">&times;</span>
-
-      <img src="${driver.image || ""}" style="width:100%; border-radius:8px; margin-bottom:10px;">
-
-      <h2>#${driver.number || ""} ${driver.name || ""}</h2>
-
-      <p><strong>Time in MPM:</strong> ${driver.time_in_mpm || ""}</p>
-      <p><strong>Location:</strong> ${driver.location || ""}</p>
-      <p><strong>Age:</strong> ${driver.age || ""}</p>
-      <p><strong>Experience:</strong> ${driver.experience || ""}</p>
-      <p><strong>Preferred Sims:</strong> ${driver.sims || ""}</p>
-      <p><strong>Current Car:</strong> ${driver.car || ""}</p>
-      <p><strong>Driving Style:</strong> ${driver.style || ""}</p>
-
-      <p><strong>Highlights:</strong><br>${highlights}</p>
-    `;
-
-    document.body.appendChild(modal);
-}
-
-loadDrivers();
-</script>
-
+  <nav>
+    <a class="nav-wordmark" href="index.html">MID PACK <span>MAFIA</span></a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="drivers.html" class="active">Drivers</a></li>
+      <li><a href="series.html">Series</a></li>
+      <li><a href="results.html">Results</a></li>
+      <li><a href="media.html">Media</a></li>
+      <li><a href="calendar.html">Calendar</a></li>
+    </ul>
+  </nav>
+  <main class="wrap">
+    <div class="eyebrow">Drivers</div>
+    <h1>Driver Roster</h1>
+    <p>This page is back online with the rest of the site and ready for your roster content.</p>
+    <div class="card">
+      Add driver bios, photos, car numbers, and social links here when you are ready.
+    </div>
+  </main>
+  <footer>
+    <div class="footer-copy">&copy; 2025 Mid Pack Mafia. All rights reserved.</div>
+    <div class="footer-tagline">Respect the Process. Fear the Results.</div>
+  </footer>
 </body>
 </html>
