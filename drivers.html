@@ -8,47 +8,544 @@
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { font-family: 'Saira', sans-serif; background: #000; color: #fff; }
-    nav, footer { background: #000; padding: 0 2.5rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; }
-    nav { height: 72px; border-bottom: 3px solid #ff0000; }
-    footer { border-top: 3px solid #ff0000; padding: 2rem 2.5rem; margin-top: 4rem; }
-    .nav-wordmark, .nav-links a { color: #fff; text-decoration: none; text-transform: uppercase; }
-    .nav-wordmark { font-weight: 800; font-size: 26px; letter-spacing: 0.06em; }
-    .nav-wordmark span, .nav-links a:hover, .nav-links a.active, .eyebrow { color: #ff0000; }
-    .nav-links { list-style: none; display: flex; gap: 28px; }
-    .nav-links a { font-weight: 700; font-size: 12px; letter-spacing: 0.12em; }
-    .wrap { max-width: 960px; margin: 0 auto; padding: 4rem 2rem; }
-    .eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 1rem; }
-    h1 { font-size: 48px; font-weight: 800; text-transform: uppercase; line-height: 1; margin-bottom: 1rem; }
-    p { max-width: 55ch; color: #aaa; line-height: 1.7; }
-    .card { margin-top: 2rem; border: 1px solid #1a1a1a; background: #0a0a0a; padding: 1.5rem; }
-    .footer-copy, .footer-tagline { font-size: 12px; letter-spacing: 0.08em; }
-    .footer-copy { color: #444; }
-    .footer-tagline { color: #ff0000; text-transform: uppercase; font-weight: 700; }
+
+    nav {
+      background: #000;
+      border-bottom: 3px solid #ff0000;
+      padding: 0 2.5rem;
+      height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .nav-wordmark {
+      font-family: 'Saira', sans-serif;
+      font-weight: 800;
+      font-size: 36px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #fff;
+      text-decoration: none;
+    }
+    .nav-wordmark span { color: #ff0000; }
+    .nav-links { display: flex; gap: 28px; list-style: none; }
+    .nav-links a {
+      font-family: 'Saira', sans-serif;
+      font-weight: 700;
+      font-size: 13px;
+      color: #fff;
+      text-decoration: none;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+    .nav-links a:hover, .nav-links a.active { color: #ff0000; }
+
+    .page-header {
+      background: #000;
+      border-bottom: 1px solid #1a1a1a;
+      padding: 3rem 2.5rem 2.5rem;
+    }
+    .page-header-inner { max-width: 1200px; margin: 0 auto; }
+    .section-label {
+      font-family: 'Saira', sans-serif;
+      font-weight: 700;
+      font-size: 19px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #ff0000;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .section-label::after { content: ''; flex: 1; height: 1px; background: #1a1a1a; }
+    .page-title {
+      font-family: 'Saira', sans-serif;
+      font-weight: 800;
+      font-size: 48px;
+      text-transform: uppercase;
+      color: #fff;
+      line-height: 1;
+    }
+    .page-title span { color: #ff0000; }
+
+    .drivers-grid {
+      max-width: 1200px;
+      margin: 3rem auto;
+      padding: 0 2.5rem;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 24px;
+    }
+
+    .driver-card {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 0.72;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+    .driver-card:hover { transform: translateY(-6px); }
+
+    .card-bg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: fill;
+    }
+
+    .card-content {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .card-top {
+      display: flex;
+      padding: 5.5% 5% 0;
+      gap: 3%;
+      height: 36%;
+    }
+
+    .card-flag-box {
+      width: 26%;
+      height: 72%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2em;
+    }
+
+    .card-photo-box {
+      flex: 1;
+      height: 100%;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .card-photo-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: top;
+    }
+    .card-photo-placeholder {
+      width: 100%;
+      height: 100%;
+      background: #1a1a1a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #333;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .card-bottom {
+      position: absolute;
+      bottom: 8%;
+      left: 5%;
+      right: 5%;
+      text-align: left;
+    }
+    .card-number {
+      font-family: 'Saira', sans-serif;
+      font-weight: 800;
+      font-size: 1.1em;
+      color: #ff0000;
+      letter-spacing: 0.05em;
+      line-height: 1;
+      margin-bottom: 2px;
+    }
+    .card-name {
+      font-family: 'Saira', sans-serif;
+      font-weight: 800;
+      font-size: 1.05em;
+      color: #fff;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      line-height: 1.1;
+    }
+    .card-sims {
+      font-family: 'Saira', sans-serif;
+      font-weight: 400;
+      font-size: 0.65em;
+      color: #aaa;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-top: 3px;
+    }
+
+    /* MODAL */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.85);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+    .modal-overlay.open { display: flex; }
+
+    .modal {
+      background: #0a0a0a;
+      border: 1px solid #1a1a1a;
+      border-top: 3px solid #ff0000;
+      max-width: 700px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      position: relative;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 1rem;
+      right: 1.25rem;
+      font-family: 'Saira', sans-serif;
+      font-weight: 800;
+      font-size: 20px;
+      color: #555;
+      cursor: pointer;
+      background: none;
+      border: none;
+      line-height: 1;
+    }
+    .modal-close:hover { color: #ff0000; }
+
+    .modal-header {
+      display: grid;
+      grid-template-columns: 200px 1fr;
+      min-height: 200px;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    .modal-photo {
+      background: #111;
+      overflow: hidden;
+    }
+    .modal-photo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: top;
+    }
+    .modal-photo-placeholder {
+      width: 100%;
+      height: 100%;
+      background: #111;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #333;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+    .modal-title {
+      padding: 1.5rem 3rem 1.5rem 1.5rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .modal-flag { font-size: 2rem; margin-bottom: 0.5rem; }
+    .modal-number {
+      font-family: 'Saira', sans-serif;
+      font-weight: 800;
+      font-size: 15px;
+      color: #ff0000;
+      letter-spacing: 0.1em;
+      margin-bottom: 4px;
+    }
+    .modal-name {
+      font-family: 'Saira', sans-serif;
+      font-weight: 800;
+      font-size: 28px;
+      text-transform: uppercase;
+      color: #fff;
+      line-height: 1.1;
+      margin-bottom: 8px;
+    }
+    .modal-location {
+      font-family: 'Saira', sans-serif;
+      font-weight: 400;
+      font-size: 14px;
+      color: #666;
+      letter-spacing: 0.06em;
+    }
+
+    .modal-body { padding: 1.5rem; }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1px;
+      background: #1a1a1a;
+      margin-bottom: 1px;
+    }
+    .info-cell {
+      background: #0a0a0a;
+      padding: 0.875rem 1rem;
+    }
+    .info-label {
+      font-family: 'Saira', sans-serif;
+      font-weight: 700;
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #ff0000;
+      margin-bottom: 4px;
+    }
+    .info-value {
+      font-family: 'Saira', sans-serif;
+      font-weight: 400;
+      font-size: 15px;
+      color: #fff;
+      line-height: 1.5;
+    }
+    .info-cell.full {
+      grid-column: 1 / -1;
+    }
+
+    .loading-msg {
+      text-align: center;
+      padding: 4rem;
+      font-family: 'Saira', sans-serif;
+      font-weight: 700;
+      font-size: 15px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: #333;
+    }
+
+    footer {
+      background: #000;
+      border-top: 3px solid #ff0000;
+      padding: 2rem 2.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-top: 4rem;
+    }
+    .footer-copy {
+      font-family: 'Saira', sans-serif;
+      font-weight: 400;
+      font-size: 13px;
+      color: #444;
+      letter-spacing: 0.08em;
+    }
+    .footer-tagline {
+      font-family: 'Saira', sans-serif;
+      font-weight: 700;
+      font-size: 13px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: #ff0000;
+    }
   </style>
 </head>
 <body>
-  <nav>
-    <a class="nav-wordmark" href="index.html">MID PACK <span>MAFIA</span></a>
-    <ul class="nav-links">
-      <li><a href="index.html">Home</a></li>
-      <li><a href="drivers.html" class="active">Drivers</a></li>
-      <li><a href="series.html">Series</a></li>
-      <li><a href="results.html">Results</a></li>
-      <li><a href="media.html">Media</a></li>
-      <li><a href="calendar.html">Calendar</a></li>
-    </ul>
-  </nav>
-  <main class="wrap">
-    <div class="eyebrow">Drivers</div>
-    <h1>Driver Roster</h1>
-    <p>This page is back online with the rest of the site and ready for your roster content.</p>
-    <div class="card">
-      Add driver bios, photos, car numbers, and social links here when you are ready.
+
+<nav>
+  <a class="nav-wordmark" href="index.html">MID PACK <span>MAFIA</span></a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="drivers.html" class="active">Drivers</a></li>
+    <li><a href="series.html">Series</a></li>
+    <li><a href="results.html">Results</a></li>
+    <li><a href="media.html">Media</a></li>
+    <li><a href="calendar.html">Calendar</a></li>
+  </ul>
+</nav>
+
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="section-label">Roster</div>
+    <h1 class="page-title">Meet the <span>Drivers</span></h1>
+  </div>
+</div>
+
+<div class="drivers-grid" id="drivers-grid">
+  <div class="loading-msg">Loading drivers...</div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal" id="modal">
+    <button class="modal-close" id="modal-close">&#x2715;</button>
+    <div class="modal-header">
+      <div class="modal-photo" id="modal-photo"></div>
+      <div class="modal-title">
+        <div class="modal-flag" id="modal-flag"></div>
+        <div class="modal-number" id="modal-number"></div>
+        <div class="modal-name" id="modal-name"></div>
+        <div class="modal-location" id="modal-location"></div>
+      </div>
     </div>
-  </main>
-  <footer>
-    <div class="footer-copy">&copy; 2025 Mid Pack Mafia. All rights reserved.</div>
-    <div class="footer-tagline">Respect the Process. Fear the Results.</div>
-  </footer>
+    <div class="modal-body" id="modal-body"></div>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-copy">&copy; 2025 Mid Pack Mafia. All rights reserved.</div>
+  <div class="footer-tagline">Respect the Process. Fear the Results.</div>
+</footer>
+
+<script>
+  const SHEET_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRkvfqLGrTpUK5-3R4tfPL-rgpTXtwrBN1K-omxTG_z3A5Z_tkyeJi2MV8jpkCxAKaAZsKom8B5I68Y/pub?output=csv';
+  const CARD_BG = '/images/ui/mpm-card.png';
+
+  const FLAGS = {
+    'US': '🇺🇸', 'USA': '🇺🇸', 'United States': '🇺🇸',
+    'CA': '🇨🇦', 'Canada': '🇨🇦',
+    'AR': '🇦🇷', 'Argentina': '🇦🇷',
+    'GB': '🇬🇧', 'UK': '🇬🇧', 'United Kingdom': '🇬🇧',
+    'AU': '🇦🇺', 'Australia': '🇦🇺',
+    'DE': '🇩🇪', 'Germany': '🇩🇪',
+    'FR': '🇫🇷', 'France': '🇫🇷',
+    'NL': '🇳🇱', 'Netherlands': '🇳🇱',
+    'BE': '🇧🇪', 'Belgium': '🇧🇪',
+    'IT': '🇮🇹', 'Italy': '🇮🇹',
+    'ES': '🇪🇸', 'Spain': '🇪🇸',
+  };
+
+  function getFlag(country) {
+    if (!country) return '';
+    return FLAGS[country.trim()] || country;
+  }
+
+  function parseCSV(text) {
+    const lines = text.trim().split('\n');
+    const headers = lines[0].split(',').map(h => h.trim().replace(/^"|"$/g, ''));
+    return lines.slice(1).map(line => {
+      const vals = [];
+      let inQuote = false, cur = '';
+      for (const ch of line) {
+        if (ch === '"') { inQuote = !inQuote; }
+        else if (ch === ',' && !inQuote) { vals.push(cur.trim()); cur = ''; }
+        else { cur += ch; }
+      }
+      vals.push(cur.trim());
+      const obj = {};
+      headers.forEach((h, i) => obj[h] = (vals[i] || '').replace(/^"|"$/g, ''));
+      return obj;
+    });
+  }
+
+  function buildCard(driver) {
+    const flag = getFlag(driver.country);
+    const hasPhoto = driver.driver_image && driver.driver_image.trim() !== '';
+    const photoEl = hasPhoto
+      ? `<img src="/images/drivers/${driver.driver_image}" alt="${driver.name}" onerror="this.parentElement.innerHTML='<div class=\"card-photo-placeholder\">No Photo</div>'">`
+      : `<div class="card-photo-placeholder">No Photo</div>`;
+
+    const card = document.createElement('div');
+    card.className = 'driver-card';
+    card.innerHTML = `
+      <img class="card-bg" src="${CARD_BG}" alt="">
+      <div class="card-content">
+        <div class="card-top">
+          <div class="card-flag-box">${flag}</div>
+          <div class="card-photo-box">${photoEl}</div>
+        </div>
+        <div class="card-bottom">
+          <div class="card-number">#${driver.number}</div>
+          <div class="card-name">${driver.name}</div>
+          <div class="card-sims">${driver.sims || ''}</div>
+        </div>
+      </div>`;
+
+    card.addEventListener('click', () => openModal(driver));
+    return card;
+  }
+
+  function openModal(driver) {
+    const flag = getFlag(driver.country);
+    const hasPhoto = driver.driver_image && driver.driver_image.trim() !== '';
+
+    document.getElementById('modal-flag').textContent = flag;
+    document.getElementById('modal-number').textContent = '#' + driver.number;
+    document.getElementById('modal-name').textContent = driver.name;
+    document.getElementById('modal-location').textContent = driver.location || '';
+
+    const photoEl = document.getElementById('modal-photo');
+    photoEl.innerHTML = hasPhoto
+      ? `<img src="/images/drivers/${driver.driver_image}" alt="${driver.name}" onerror="this.parentElement.innerHTML='<div class=\"modal-photo-placeholder\">No Photo</div>'">`
+      : `<div class="modal-photo-placeholder">No Photo</div>`;
+
+    document.getElementById('modal-body').innerHTML = `
+      <div class="info-grid">
+        <div class="info-cell">
+          <div class="info-label">Age</div>
+          <div class="info-value">${driver.age || '—'}</div>
+        </div>
+        <div class="info-cell">
+          <div class="info-label">Time in MPM</div>
+          <div class="info-value">${driver.time_in_mpm || '—'}</div>
+        </div>
+        <div class="info-cell">
+          <div class="info-label">Experience</div>
+          <div class="info-value">${driver.experience || '—'}</div>
+        </div>
+        <div class="info-cell">
+          <div class="info-label">Currently Racing</div>
+          <div class="info-value">${driver.car || '—'}</div>
+        </div>
+        <div class="info-cell full">
+          <div class="info-label">Preferred Sims</div>
+          <div class="info-value">${driver.sims || '—'}</div>
+        </div>
+        <div class="info-cell full">
+          <div class="info-label">Driving Style</div>
+          <div class="info-value">${driver.style || '—'}</div>
+        </div>
+        <div class="info-cell full">
+          <div class="info-label">Racing Highlights</div>
+          <div class="info-value">${driver.highlights || '—'}</div>
+        </div>
+      </div>`;
+
+    document.getElementById('modal-overlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeModal() {
+    document.getElementById('modal-overlay').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  document.getElementById('modal-close').addEventListener('click', closeModal);
+  document.getElementById('modal-overlay').addEventListener('click', e => {
+    if (e.target === document.getElementById('modal-overlay')) closeModal();
+  });
+
+  async function loadDrivers() {
+    const grid = document.getElementById('drivers-grid');
+    try {
+      const res = await fetch(SHEET_CSV);
+      if (!res.ok) throw new Error('Failed to fetch');
+      const text = await res.text();
+      const drivers = parseCSV(text);
+      grid.innerHTML = '';
+      drivers.forEach(d => {
+        if (d.name) grid.appendChild(buildCard(d));
+      });
+    } catch(e) {
+      grid.innerHTML = '<div class="loading-msg" style="color:#555;">Unable to load driver data. Please try again later.</div>';
+    }
+  }
+
+  loadDrivers();
+</script>
+
 </body>
 </html>
