@@ -167,41 +167,11 @@
 
     .modal-body { padding: 1.5rem; }
 
-    .wins-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: 1px;
-      background: #ff0000;
-      margin-bottom: 1px;
-    }
-    .win-cell {
-      background: #0a0a0a;
-      padding: 1rem;
-      text-align: center;
-    }
-    .win-label {
-      font-family: 'Saira', sans-serif;
-      font-weight: 700;
-      font-size: 11px;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: #ff0000;
-      margin-bottom: 6px;
-    }
-    .win-value {
-      font-family: 'Saira', sans-serif;
-      font-weight: 800;
-      font-size: 32px;
-      color: #fff;
-      line-height: 1;
-    }
-
     .info-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 1px;
       background: #1a1a1a;
-      margin-top: 1px;
     }
     .info-cell { background: #0a0a0a; padding: 0.875rem 1rem; }
     .info-cell.full { grid-column: 1 / -1; }
@@ -329,6 +299,14 @@
     });
   }
 
+  function field(label, value, full = false) {
+    if (!value || value.trim() === '' || value.trim() === '0') return '';
+    return `<div class="info-cell${full ? ' full' : ''}">
+      <div class="info-label">${label}</div>
+      <div class="info-value">${value}</div>
+    </div>`;
+  }
+
   function buildCard(driver) {
     const hasCard = driver.image && driver.image.trim() !== '';
     if (!hasCard) return null;
@@ -350,56 +328,19 @@
       ? `<img src="${IMG_BASE}${driver.image}" alt="${driver.name}">`
       : '';
 
-    const sgWins = driver['SimGrid Wins'] || '0';
-    const irWins = driver['iRacing Wins'] || '0';
-    const lmuWins = driver['LMU Wins'] || '0';
+    const body =
+      field('Age', driver.age) +
+      field('Time in MPM', driver.time_in_mpm) +
+      field('Experience', driver.experience) +
+      field('Currently Racing', driver.car) +
+      field('Preferred Sims', driver.sims, true) +
+      field('Driving Style', driver.style, true) +
+      field('Racing Highlights', driver.highlights, true) +
+      field('SimGrid Wins', driver['SimGrid Wins']) +
+      field('iRacing Wins', driver['iRacing Wins']) +
+      field('LMU Wins', driver['LMU Wins']);
 
-    document.getElementById('modal-body').innerHTML = `
-      <div class="wins-row">
-        <div class="win-cell">
-          <div class="win-label">SimGrid Wins</div>
-          <div class="win-value">${sgWins}</div>
-        </div>
-        <div class="win-cell">
-          <div class="win-label">iRacing Wins</div>
-          <div class="win-value">${irWins}</div>
-        </div>
-        <div class="win-cell">
-          <div class="win-label">LMU Wins</div>
-          <div class="win-value">${lmuWins}</div>
-        </div>
-      </div>
-      <div class="info-grid">
-        <div class="info-cell">
-          <div class="info-label">Age</div>
-          <div class="info-value">${driver.age || '—'}</div>
-        </div>
-        <div class="info-cell">
-          <div class="info-label">Time in MPM</div>
-          <div class="info-value">${driver.time_in_mpm || '—'}</div>
-        </div>
-        <div class="info-cell">
-          <div class="info-label">Experience</div>
-          <div class="info-value">${driver.experience || '—'}</div>
-        </div>
-        <div class="info-cell">
-          <div class="info-label">Currently Racing</div>
-          <div class="info-value">${driver.car || '—'}</div>
-        </div>
-        <div class="info-cell full">
-          <div class="info-label">Preferred Sims</div>
-          <div class="info-value">${driver.sims || '—'}</div>
-        </div>
-        <div class="info-cell full">
-          <div class="info-label">Driving Style</div>
-          <div class="info-value">${driver.style || '—'}</div>
-        </div>
-        <div class="info-cell full">
-          <div class="info-label">Racing Highlights</div>
-          <div class="info-value">${driver.highlights || '—'}</div>
-        </div>
-      </div>`;
-
+    document.getElementById('modal-body').innerHTML = `<div class="info-grid">${body}</div>`;
     document.getElementById('modal-overlay').classList.add('open');
     document.body.style.overflow = 'hidden';
   }
